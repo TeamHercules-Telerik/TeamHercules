@@ -3,7 +3,7 @@
 A team project created as an assignment for Javascript UI & DOM Course at Telerik Software Academy. 
 Team Hercules
 
-<p align="center"><img src="https://raw.githubusercontent.com/TeamHercules-Telerik/TeamHercules/master/TeamHercules/screenshots/evil-pacman.png"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/TeamHercules-Telerik/TeamHercules/master/screenshots/evil-pacman.png"></p>
 
 ### Game Story
 **The JavaScript Museum** was a peaceful place, where kids loved to hang in, to learn the knacks of JavaScript. Until the day when the **Evil Pacman** broke in. He was greedy and wanted all the treasures in the  museum for himself. He started eating through them, swallowing every last piece of JavaScript knowledge there was. The more he ate, the cleverer he got.
