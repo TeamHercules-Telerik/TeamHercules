@@ -1,7 +1,13 @@
 define(function() {
     'use strict'
     var Guardian = (function () {
+
         var gardNumber = 0;
+
+        var fieldWalls;
+        var cellHeight = 50,
+            wallHeight = 6;
+
         function Guardian(x, y, radius, speed, direction, fillColor, strokeColor) {
     
             this.name = "Guard" + gardNumber;
@@ -16,16 +22,9 @@ define(function() {
         }
 
         var canvas = document.getElementById("canvas"),
-        ctx = canvas.getContext("2d");
-
-
-
-        var fieldWalls = LevelsDesign[0].labyrinth,
-                cellHeight = 50,
-                wallHeight = 6;
+        ctx = canvas.getContext("2d");       
 
         Guardian.prototype.draw = function () {
-            //console.log(this.name + ": " + this.x + " " + this.y); TO DO remove
             ctx.beginPath();
             ctx.quadraticCurveTo(this.x - this.radius * 0.60, this.y + this.radius * 0.670, this.x, this.y);
             ctx.lineTo(this.x + this.radius * 0.60, this.y + this.radius * 0.60);
@@ -80,7 +79,7 @@ define(function() {
         };
 
         function ChooseDirectionToContinue(ghost) {
-            //console.log(ghost.name); remove
+            //console.log(ghost.name);  TODO remove
             var possibleDirections = [];
             var directions = ['up', 'down', 'left', 'right']
             var reverseDirections = [];
@@ -172,9 +171,10 @@ define(function() {
             }
         };
 
-        Guardian.creatGuardians = function creatGuardians(guardiansPositions, cellHeight, wallHeight) {
+        Guardian.createGuardians = function createGuardians(guardiansPositions, cellHeight, wallHeight, labirynth) {
 
             var guardians = [];
+            fieldWalls = labirynth;
 
             for (var i = 0; i < guardiansPositions.length; i++) {
                 var x = guardiansPositions[i].col * 50 + (cellHeight + wallHeight) / 2,
