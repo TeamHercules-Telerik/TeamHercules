@@ -1,6 +1,6 @@
 ﻿(function () {
     'use strict';
-    require(['pacman', 'guardians'], function (Pacman, Guardian) {
+    require(['pacman', 'guardians', 'SVG_Drawer', 'levels'], function (Pacman, Guardian, SVG_Drawer, levels) {
         var soundIntro = new Audio("./sounds/pacman_song.wav"),
             soundDie = new Audio("./sounds/pacman_death.wav");
             soundIntro.volume = 0.2;
@@ -11,17 +11,14 @@
             maxY = ctx.canvas.height;
 
         var level = 0,
-            EvilPacmanScore = 0,
-            lives = 3,
             newGame = false;
-        //this.EvilPacmanScore = 0;
 
-        var fieldWalls = LevelsDesign[level].labyrinth,
-            allLetters = initializeFood(level),
+        var fieldWalls = levels.Designs[level].labyrinth,
+            allLetters = levels.initializeFood(level),
             cellHeight = 50,
             wallHeight = 6;
 
-        var guardians = Guardian.creatGuardians(LevelsDesign[level].guardiansPositions, cellHeight, wallHeight);
+        var guardians = Guardian.createGuardians(levels.Designs[level].guardiansPositions, cellHeight, wallHeight, fieldWalls);
         var pacManSpeed = 4;
         var pacMan = new Pacman(408, 128, 'left', pacManSpeed, fieldWalls, allLetters);
 
@@ -45,21 +42,20 @@
                 soundIntro.play();
                 updateHighScores();
                 level = 0;
-                EvilPacmanScore = 0;
-                this.lives = 3;
                 allLetters = null;
-                allLetters = initializeFood(level);
+                allLetters = levels.initializeFood(level);
                 pacMan = null;
                 pacMan = new Pacman(408, 128, 'left', pacManSpeed, fieldWalls, allLetters);
-                Guardian.resetGuardians(guardians, LevelsDesign[level].guardiansPositions);
+                Guardian.resetGuardians(guardians, levels.Designs[level].guardiansPositions);
                 newGame = true;
-                this.pause = false;
+                pacMan.pause = false;
             };
 
             this.nextGameFrame = function nextGameFrame() {
-                if (this.pause === false) {
+                if (pacMan.pause === false) {
+
                     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);//clear
-                    drawLetters(allLetters, ctx);
+                    levels.drawLetters(allLetters, ctx);
                     pacMan.draw();
                     pacMan.move(allLetters);
 
@@ -68,7 +64,7 @@
                         guardians[i].move();
                         if (guardians[i].detectCollisionWithPacman(pacMan)) {
                             soundDie.play();
-                            if (lives > 1) {
+                            if (pacMan.lives > 1) {
                                 loseLife();
                             } else {
                                 endGame();
@@ -77,13 +73,13 @@
                     }
 
                     displayScore();
-                    displayLives(lives);
+                    displayLives(pacMan.lives);
                 }
             };
 
             (function initGame() {
-                drawField(fieldWalls, cellHeight, wallHeight);
-                drawLetters(allLetters, ctx);
+                SVG_Drawer.DrawField(fieldWalls, cellHeight, wallHeight);
+                levels.drawLetters(allLetters, ctx);
 
                 pacMan.draw(ctx);
 
@@ -92,7 +88,7 @@
                 }
 
                 displayScore();
-                displayLives(lives);
+                displayLives(pacMan.lives);
                 updateHighScores();
             }());
 
@@ -101,13 +97,13 @@
                 window.addEventListener('keydown', function (e) {
                     if (e.keyCode == 32 && newGame == false) {
                         e.preventDefault();
-                        game.startGame();;
-                    } else if (e.keyCode == 32 && newGame && game.pause == false) {
+                        game.startGame();
+                    } else if (e.keyCode == 32 && newGame && pacMan.pause == false) {
                         e.preventDefault();
-                        game.pause = true;
-                    } else if (e.keyCode == 32 && newGame && game.pause) {
+                        pacMan.pause = true;
+                    } else if (e.keyCode == 32 && newGame && pacMan.pause) {
                         e.preventDefault();
-                        game.pause = false;
+                        pacMan.pause = false;
                     }
                 }, false);
             })();
@@ -119,9 +115,8 @@
 
         function endGame() {								//TODO
             game.pause = true;
-            lives = 0;
-            var EvilPacmanName = prompt('GAME OVER! \n Your brain expanded with: ' + EvilPacmanScore + '. Enter your name:') || 'Guest'; //better way?
-            localStorage.setItem(EvilPacmanScore, EvilPacmanName);
+            var EvilPacmanName = prompt('GAME OVER! \n Your brain expanded with: ' + pacMan.score + '. Enter your name:') || 'Guest'; //better way?
+            localStorage.setItem(pacMan.score, EvilPacmanName);
             updateHighScores();
             newGame = false;
 
@@ -129,12 +124,12 @@
         }
 
         function loseLife() {
-            game.pause = true;
-            lives--;
+            pacMan.pause = true;
+            pacMan.lives--;
             setTimeout(function () {
                 pacMan.reset();
-                Guardian.resetGuardians(guardians, LevelsDesign[level].guardiansPositions);
-                game.pause = false;
+                Guardian.resetGuardians(guardians, levels.Designs[level].guardiansPositions);
+                pacMan.pause = false;
             }, 2000);
         }
 
@@ -163,7 +158,7 @@
             ctx.font = "20px Calibri";
             ctx.textAlign = 'left';
             ctx.fillStyle = "yellowgreen";
-            ctx.fillText("Brain expansion: " + EvilPacmanScore, 10, 435);
+            ctx.fillText("Brain expansion: " + pacMan.score, 10, 435);
         }
 
         //update high-score board
@@ -196,5 +191,7 @@
                 }
             }
         };
+
     });
+    
 })();

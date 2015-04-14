@@ -1,4 +1,4 @@
-define(["CanvasDrawer"],function (CanvasDrawer) {
+define(["CanvasDrawer", "traps", "game"],function (CanvasDrawer, Trap, game) {
     var PacMan = (function () {
         function PacMan(x, y, direction, speed, fieldWalls, allLetters) {
 
@@ -8,10 +8,12 @@ define(["CanvasDrawer"],function (CanvasDrawer) {
                 wallHeight = 6;
             this.positionX = x;
             this.positionY = y;
+            this.score = 0;
+            this.lives = 3;
             this.speed = speed;
             this.direction = direction;
             this.wantedDirection = direction;
-            this.pause = false;
+            this.pause = true;
             this.r = 20;
             this.frame = 0;
 
@@ -66,18 +68,24 @@ define(["CanvasDrawer"],function (CanvasDrawer) {
                 for (var i = 0; i < allLetters.length; i++) {
                     var letter = allLetters[i];
                     var dX = this.positionX - letter.x;
+
                     if (dX < 0) {
                         dX *= -1;
                     }
+
                     var dY = this.positionY - letter.y;
+
                     if (dY < 0) {
                         dY *= -1;
                     }
+
                     if (dX + dY < this.r * 2 / 3) {
-                        //TO DO += 10;
+                        
+                        this.score += 10;
+
                         if (letter.letter == '{') {
-                            setTrap();
-                            game.pause = true; //TO DO
+                            Trap.ActivateTrap(this);
+                            this.pause = true; //TO DO
                         }
 
                         soundEat.play()
