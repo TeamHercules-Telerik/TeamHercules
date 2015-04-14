@@ -1,6 +1,6 @@
 ﻿(function () {
     'use strict';
-    require(['pacman', 'guardians', 'SVG_Drawer', 'levels'], function (Pacman, Guardian, SVG_Drawer, levels) {
+    require(['pacman', 'guardian', 'SVG_Drawer', 'levels'], function (Pacman, Guardian, SVG_Drawer, levels) {
         var soundIntro = new Audio("./sounds/pacman_song.wav"),
             soundDie = new Audio("./sounds/pacman_death.wav");
             soundIntro.volume = 0.2;
@@ -20,7 +20,7 @@
 
         var guardians = Guardian.createGuardians(levels.Designs[level].guardiansPositions, cellHeight, wallHeight, fieldWalls);
         var pacManSpeed = 4;
-        var pacMan = new Pacman(408, 128, 'left', pacManSpeed, fieldWalls, allLetters);
+        var pacMan =  new Pacman(408, 128, 'left', pacManSpeed);
 
         var game = new Game();
 
@@ -33,20 +33,17 @@
 
         function Game() {
 
-            this.pause = true;
-            this.level = 1;
-            
-
             this.startGame = function startGame() {
 
                 soundIntro.play();
-                updateHighScores();
+
                 level = 0;
-                allLetters = null;
-                allLetters = levels.initializeFood(level);
-                pacMan = null;
-                pacMan = new Pacman(408, 128, 'left', pacManSpeed, fieldWalls, allLetters);
+                pacMan.lives = 3;
+                pacMan.scores = 0;
+                //pacman
+                pacMan.reset();
                 Guardian.resetGuardians(guardians, levels.Designs[level].guardiansPositions);
+
                 newGame = true;
                 pacMan.pause = false;
             };
@@ -57,7 +54,7 @@
                     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);//clear
                     levels.drawLetters(allLetters, ctx);
                     pacMan.draw();
-                    pacMan.move(allLetters);
+                    pacMan.move(allLetters, fieldWalls);
 
                     for (var i = 0; i < guardians.length; i++) {
                         guardians[i].draw();
@@ -67,12 +64,15 @@
                             if (pacMan.lives > 1) {
                                 loseLife();
                             } else {
+                                pacMan.lives --;
+                                displayScore(pacMan.score);
                                 endGame();
+                                break;
                             }
                         }
                     }
 
-                    displayScore();
+                    displayScore(pacMan.score);
                     displayLives(pacMan.lives);
                 }
             };
@@ -81,15 +81,14 @@
                 SVG_Drawer.DrawField(fieldWalls, cellHeight, wallHeight);
                 levels.drawLetters(allLetters, ctx);
 
-                pacMan.draw(ctx);
-
                 for (var i = 0; i < guardians.length; i++) {
                     guardians[i].draw();
                 }
 
-                displayScore();
+                displayScore(pacMan.score);
                 displayLives(pacMan.lives);
                 updateHighScores();
+                pacMan.draw();
             }());
 
             //start-pause-unpause on space key down
@@ -114,7 +113,11 @@
         }, 40);
 
         function endGame() {								//TODO
-            game.pause = true;
+           pacMan.pause = true;
+           // pacMan.reset();
+
+            //Guardian.resetGuardians(guardians, levels.Designs[level].guardiansPositions);
+
             var EvilPacmanName = prompt('GAME OVER! \n Your brain expanded with: ' + pacMan.score + '. Enter your name:') || 'Guest'; //better way?
             localStorage.setItem(pacMan.score, EvilPacmanName);
             updateHighScores();
@@ -154,11 +157,11 @@
             ctx.fill();
         }
         //score
-        function displayScore() {
+        function displayScore(score) {
             ctx.font = "20px Calibri";
             ctx.textAlign = 'left';
             ctx.fillStyle = "yellowgreen";
-            ctx.fillText("Brain expansion: " + pacMan.score, 10, 435);
+            ctx.fillText("Brain expansion: " + score, 10, 435);
         }
 
         //update high-score board
@@ -191,7 +194,5 @@
                 }
             }
         };
-
     });
-    
 })();

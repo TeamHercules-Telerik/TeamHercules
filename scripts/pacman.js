@@ -1,6 +1,6 @@
-define(["CanvasDrawer", "traps", "game"],function (CanvasDrawer, Trap, game) {
+define(["CanvasDrawer", "trap", "game"],function (CanvasDrawer, Trap, game) {
     var PacMan = (function () {
-        function PacMan(x, y, direction, speed, fieldWalls, allLetters) {
+        function PacMan(x, y, direction, speed) {
 
             var soundEat = new Audio("./sounds/pacman_coinin.wav");
             soundEat.volume = 0.3;
@@ -26,18 +26,18 @@ define(["CanvasDrawer", "traps", "game"],function (CanvasDrawer, Trap, game) {
                 }
             };
 
-            this.move = function () {
+            this.move = function (allLetters, fieldWalls) {
                 for (var i = 0; i < this.speed; i++) {
 
                     //user want to change direction
                     if (this.wantedDirection !== this.direction) {
-                        if (!this.detectCollisions(this.wantedDirection)) {
+                        if (!this.detectCollisions(this.wantedDirection, allLetters, fieldWalls)) {
                             this.direction = this.wantedDirection;
                         }
                     }
 
                     //move if it is possible
-                    if (!this.detectCollisions(this.direction)) {
+                    if (!this.detectCollisions(this.direction, allLetters, fieldWalls)) {
                         switch (this.direction) {
                             case 'up':
                                 this.positionY--;
@@ -57,7 +57,7 @@ define(["CanvasDrawer", "traps", "game"],function (CanvasDrawer, Trap, game) {
             };
 
 
-            this.detectCollisions = function (direction) {
+            this.detectCollisions = function (direction, allLetters, fieldWalls) {
                 var collisionDetected = false;
 
                 if (detectCollisionsWithWalls(direction, this.positionX, this.positionY, fieldWalls)) {
@@ -177,6 +177,7 @@ define(["CanvasDrawer", "traps", "game"],function (CanvasDrawer, Trap, game) {
         PacMan.prototype.reset = function () {
             this.positionX = 408;
             this.positionY = 128;
+            this.direction = 'left';
             this.wantedDirection = 'left';
             this.speed = 4;//pacManSpeed; TO DO
         };
