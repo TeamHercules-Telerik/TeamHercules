@@ -82,8 +82,94 @@ define(function () {
                 ]
             };
 
+            var level2 = {
+                labyrinth: [
+                    "------------------- ",
+                    "|    | |   |   |   |",
+                    "-- -- --  - --  - - ",
+                    "| | ||  ||   |   | |",
+                    "     -   --   ----  ",
+                    "|| |   |   |||| |  |",
+                    "- - --  ---   -  -  ",
+                    "|      ||  ||| |  ||",
+                    " - ----       -  -  ",
+                    "| |  || |  | |  |  |",
+                    "-- -    ---   -- -- ",
+                    "|   || |    |||    |",
+                    " --   - - --  --- - ",
+                    "|| ||  | |   |   |||",
+                    " - - - - -- --  -   ",
+                    "|    |  |  |   |   |",
+                    "------------------- "
+                ],
+                food: [
+                    //x,y, orientation(vertical/horizontal), text
+                    [280, 33, 'h', 'NaN'],
+                    [275, 87, 'h', 'mou'],
+                    [468, 335, 'h', 'while(code>0)'],
+                    [665, 335, 'h', '{guardCode();}'],
+                    [676, 65, 'v', 'beer.cloneNode(true)'],
+                    [8, 33, 'h', 'while(!caught){eat}'],
+                    [128, 43, 'v', 'getDay()'],
+                    [175, 60, 'v', 'j--;'],
+                    [225, 60, 'v', 'i++;'],
+                    [25, 83, 'h', '[J,S]'],
+                    [60, 133, 'h', 'this'],
+                    [155, 133, 'h', 'querySelector'],
+                    [8, 183, 'h', 'document.getElementById(id)'],
+                    [128, 185, 'v', 'level= 2'],
+                    [9, 233, 'h', 'x = 10'],
+                    [158, 233, 'h', 'y += x'],
+                    [23, 63, 'v', '=food;'],
+                    [23, 265, 'v', '(you!=me)'],
+                    [53, 283, 'h', 'new'],
+                    [145, 283, 'h', '125'],
+                    [59, 333, 'h', 'var p;'],
+                    [175, 315, 'v', '@'],
+                    [225, 243, 'v', 'else if ()'],
+                    [30, 385, 'h', 'parentDiv.tagName'],
+                    [327, 75, 'v', 'seover'],
+                    [277, 210, 'v', 'new game()'],
+                    [327, 218, 'v', 'error'],
+                    [360, 335, 'h', 'a >= b'],
+                    [360, 33, 'h', 'if(drinkBeer&&'],
+                    [558, 33, 'h', 'codeJavaScript)'],
+                    [755, 33, 'h', '{bored = false}'],
+                    [270, 385, 'h', 'continue;'],
+                    [420, 385, 'h', 'a ? b : c'],
+                    [570, 385, 'h', 'pacMan.run()'],
+                    [377, 60, 'v', 'booster() {speed++}'],
+                    [427, 50, 'v', 'that'],
+                    [458, 83, 'h', 'addEventListene'],
+                    [630, 85, 'v', 'guardians.length++;'],
+                    [425, 133, 'h', 'start();'],
+                    [385, 283, 'h', 'setInterval(f,8)'],
+                    [708, 133, 'h', '21 % 5'],
+                    [690, 83, 'h', 'var treasure'],
+                    [858, 83, 'h', '= food'],
+                    [698, 183, 'h', 'x++'],
+                    [785, 183, 'h', 'random()'],
+                    [698, 233, 'h', 'Math.PI'],
+                    [770, 385, 'h', 'promp(\':D\')'],
+                    [818, 233, 'h', 'eat()'],
+                    [777, 143, 'v', '!== 0'],
+                    [810, 133, 'h', 'document.'],
+                    [927, 115, 'v', 'firstChild'],
+                    [708, 283, 'h', 'var arr = [a, b, c]'],
+                    [877, 300, 'v', 'push'],
+                    [927, 320, 'v', 'pop()']
+                ],
+
+                guardiansPositions: [
+                    { row: 0, col: 0 },
+                    { row: 7, col: 0 },
+                    { row: 0, col: 18 },
+                    { row: 7, col: 18 }
+                ]
+            };
 
             this.Designs.push(level1);
+            this.Designs.push(level2);
 
         }
 
@@ -144,6 +230,11 @@ define(function () {
                 ctx.fillText(letter.letter, letter.x, letter.y);
                 ctx.restore();
             }
+        };
+
+        Levels.prototype.count = function count() {
+
+            return this.Designs.length;
         };
 
         return Levels;
