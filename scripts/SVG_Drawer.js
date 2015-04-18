@@ -6,6 +6,13 @@ define(function () {
 
         SVG_Drawer.prototype.DrawField = function (fieldWalls, cellHeight, wallHeight) {
 
+            // clear
+            var field = document.getElementById('game');
+
+            while(field.firstChild){
+                field.removeChild(field.firstChild);
+            }
+
             var svgNS = 'http://www.w3.org/2000/svg';
 
             for (var i = 0; i < fieldWalls.length; i++) {
@@ -33,7 +40,6 @@ define(function () {
                 }
             }
 
-            //TODO union
             var signUp = document.createElementNS(svgNS, 'text');
             signUp.setAttribute('x', 412);
             signUp.setAttribute('y', 190);
@@ -50,7 +56,7 @@ define(function () {
             levelSignUp.setAttribute('x', 18);
             levelSignUp.setAttribute('y', 85);
             levelSignUp.innerHTML = 'level';
-            document.getElementById('game').appendChild(levelSignUp);
+            //document.getElementById('game').appendChild(levelSignUp);
 
         }
 
