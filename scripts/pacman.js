@@ -1,4 +1,4 @@
-define(["CanvasDrawer", "trap", "game"],function (CanvasDrawer, Trap, game) {
+define(["CanvasDrawer", "trap", "game"],function (CanvasDrawer, Trap) {
     var PacMan = (function () {
         function PacMan(x, y, direction, speed) {
 
@@ -84,11 +84,11 @@ define(["CanvasDrawer", "trap", "game"],function (CanvasDrawer, Trap, game) {
                         this.score += 10;
 
                         if (letter.letter == '{') {
-                            Trap.ActivateTrap(this);
-                            this.pause = true; //TO DO
+                            Trap.ActivateTrap(this, speed);
+                            this.pause = true;
                         }
 
-                        soundEat.play()
+                        soundEat.play();
                         allLetters.splice(i, 1);
                     }
                 }
@@ -179,7 +179,7 @@ define(["CanvasDrawer", "trap", "game"],function (CanvasDrawer, Trap, game) {
             this.positionY = 128;
             this.direction = 'left';
             this.wantedDirection = 'left';
-            this.speed = 4;//pacManSpeed; TO DO
+            this.speed = 4;
         };
 
         return PacMan;

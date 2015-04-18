@@ -1,14 +1,10 @@
 ﻿(function () {
     'use strict';
-    require(['pacman', 'guardian', 'SVG_Drawer', 'levels'], function (Pacman, Guardian, SVG_Drawer, levels) {
+    require(['pacman', 'guardian', 'SVG_Drawer', 'levels', 'CanvasDrawer'],
+        function (Pacman, Guardian, SVG_Drawer, levels, CanvasDrawer) {
         var soundIntro = new Audio("./sounds/pacman_song.wav"),
             soundDie = new Audio("./sounds/pacman_death.wav");
             soundIntro.volume = 0.2;
-
-        var canvas = document.getElementById("canvas"),
-            ctx = canvas.getContext("2d"),
-            maxX = ctx.canvas.width,
-            maxY = ctx.canvas.height;
 
         var level = 0,
             newGame = false;
@@ -35,24 +31,43 @@
 
             this.startGame = function startGame() {
 
-                soundIntro.play();
-
                 level = 0;
+                this.initLevel();
                 pacMan.lives = 3;
-                pacMan.scores = 0;
-                //pacman
+                pacMan.score = 0;
                 pacMan.reset();
                 Guardian.resetGuardians(guardians, levels.Designs[level].guardiansPositions);
 
-                newGame = true;
-                pacMan.pause = false;
+                setTimeout(function(){
+                    soundIntro.play();
+                    newGame = true;
+                    pacMan.pause = false;
+                }, 1000);
             };
 
             this.nextGameFrame = function nextGameFrame() {
+
                 if (pacMan.pause === false) {
 
-                    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);//clear
-                    levels.drawLetters(allLetters, ctx);
+                    if (allLetters.length == 0)
+                    {
+                        if (level == levels.count() - 1)
+                        {
+                            endGame();
+                        }
+                        else {
+                            level++;
+                            pacMan.reset();
+                            pacMan.pause = true;
+                            this.initLevel();
+                            setTimeout(function () {
+                                pacMan.pause = false;
+                            }, 1000);
+                        }
+                    }
+
+                    CanvasDrawer.Clear();
+                    CanvasDrawer.DrawLetters(allLetters);
                     pacMan.draw();
                     pacMan.move(allLetters, fieldWalls);
 
@@ -65,27 +80,38 @@
                                 loseLife();
                             } else {
                                 pacMan.lives --;
-                                displayScore(pacMan.score);
+                                CanvasDrawer.DrawScores(pacMan.score);
                                 endGame();
                                 break;
                             }
                         }
                     }
 
-                    displayScore(pacMan.score);
+                    CanvasDrawer.DrawScores(pacMan.score);
                     displayLives(pacMan.lives);
                 }
             };
 
-            (function initGame() {
+            this.initLevel = function initLevel() {
+
+                fieldWalls = levels.Designs[level].labyrinth;
                 SVG_Drawer.DrawField(fieldWalls, cellHeight, wallHeight);
-                levels.drawLetters(allLetters, ctx);
+                allLetters = levels.initializeFood(level);
+                guardians = Guardian.createGuardians(levels.Designs[level].guardiansPositions, cellHeight, wallHeight, fieldWalls);
+
+                CanvasDrawer.ShowLevelLabel(level + 1);
+            };
+
+            (function initGame() {
+
+                SVG_Drawer.DrawField(fieldWalls, cellHeight, wallHeight);
+                CanvasDrawer.DrawLetters(allLetters);
 
                 for (var i = 0; i < guardians.length; i++) {
                     guardians[i].draw();
                 }
 
-                displayScore(pacMan.score);
+                CanvasDrawer.DrawScores(pacMan.score);
                 displayLives(pacMan.lives);
                 updateHighScores();
                 pacMan.draw();
@@ -112,18 +138,13 @@
             game.nextGameFrame();
         }, 40);
 
-        function endGame() {								//TODO
-           pacMan.pause = true;
-           // pacMan.reset();
-
-            //Guardian.resetGuardians(guardians, levels.Designs[level].guardiansPositions);
-
-            var EvilPacmanName = prompt('GAME OVER! \n Your brain expanded with: ' + pacMan.score + '. Enter your name:') || 'Guest'; //better way?
+        function endGame() {
+            pacMan.pause = true;
+            var message = (pacMan.lives == 0) ? 'GAME OVER!' : 'IT LOOKS LIKE YOU GET ALL JavaScript KNOWLEDGE FROM OUR MUSEUM!';
+            var EvilPacmanName = prompt(message + ' \n Your brain expanded with: ' + pacMan.score + '. Enter your name:') || 'Guest';
             localStorage.setItem(pacMan.score, EvilPacmanName);
             updateHighScores();
             newGame = false;
-
-            document.onkeydown = function (e) { return true; }
         }
 
         function loseLife() {
@@ -144,24 +165,8 @@
                 x = 440 + i * 30;
                 y = 430;
 
-                var life = drawLife(ctx, x, y);
+                var life = CanvasDrawer.DrawLife(x, y);
             }
-        }
-
-        function drawLife(ctx, x, y) {
-            ctx.beginPath();
-            ctx.arc(x, y, 10, 30 * Math.PI / 180, 330 * Math.PI / 180);
-            ctx.lineTo(x, y);
-            ctx.closePath();
-            ctx.fillStyle = 'yellow';
-            ctx.fill();
-        }
-        //score
-        function displayScore(score) {
-            ctx.font = "20px Calibri";
-            ctx.textAlign = 'left';
-            ctx.fillStyle = "yellowgreen";
-            ctx.fillText("Brain expansion: " + score, 10, 435);
         }
 
         //update high-score board
