@@ -1,5 +1,4 @@
-﻿//TO DO
-define(function () {
+﻿define(function () {
     'use strict'
     var CanvasDrawer = (function () {
         var CanvasDrawer = function CanvasDrawer() {
@@ -11,7 +10,7 @@ define(function () {
         CanvasDrawer.imagePacman.src = 'pacman sprite.png';
 
         CanvasDrawer.prototype = {
-            DrawPacman: function (positionX, positionY, r, direction, frame) {
+            DrawPacman: function DrawPacman(positionX, positionY, r, direction, frame) {
 
                 // draw cropped image
                 var spriteX = [0, 40, 80, 118, 80, 40];
@@ -34,6 +33,68 @@ define(function () {
                 }
 
                 CanvasDrawer.ctx.drawImage(CanvasDrawer.imagePacman, sourceX, sourceY, 39, 43, positionX - r, positionY - r, 40, 44);
+            },
+
+            DrawLife: function DrawLife(x, y) {
+
+                var ctx = CanvasDrawer.ctx;
+                ctx.beginPath();
+                ctx.arc(x, y, 10, 30 * Math.PI / 180, 330 * Math.PI / 180);
+                ctx.lineTo(x, y);
+                ctx.closePath();
+                ctx.fillStyle = 'yellow';
+                ctx.fill();
+            },
+
+            DrawScores: function DrawScores(scores) {
+
+                var ctx = CanvasDrawer.ctx;
+                ctx.font = "20px Calibri";
+                ctx.textAlign = 'left';
+                ctx.fillStyle = "yellowgreen";
+                ctx.fillText("Brain expansion: " + scores, 10, 435);
+            },
+
+
+            ShowLevelLabel: function ShowLevelLabel(level) {
+
+                var ctx = CanvasDrawer.ctx;
+                ctx.font = "100px Calibri";
+                ctx.textAlign = 'left';
+                ctx.fillStyle = "yellowgreen";
+                ctx.fillText("Level " + level, 330, 220);
+                ctx.restore();
+            },
+
+            DrawLetters: function DrawLetters(allLettersWithPositions) {
+
+                var ctx = CanvasDrawer.ctx;
+
+                for (var i = 0; i < allLettersWithPositions.length; i++) {
+                    var letter = allLettersWithPositions[i];
+                    ctx.save();
+                    if (letter.orientation === 'v') {
+                        ctx.translate(letter.x, letter.y);
+                        ctx.rotate(Math.PI / 2);
+                        ctx.translate(-letter.x, -letter.y);
+                        ctx.textAlign = "center";
+                    }
+                    //ctx.shadowColor = "rgba(232,144,220,0.5)";
+                    ctx.fillStyle = "rgba(230,230,230,1)";
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 0;
+                    ctx.shadowBlur = 0;
+                    ctx.font = "bold 12px Calibri";
+                    ctx.fillText(letter.letter, letter.x, letter.y);
+                    ctx.restore();
+                }
+            },
+
+            Clear: function Clear() {
+
+                var ctx = CanvasDrawer.ctx;
+
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             }
         };
 
