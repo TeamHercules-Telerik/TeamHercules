@@ -49,6 +49,8 @@
 
                 if (pacMan.pause === false) {
 
+                    CanvasDrawer.Clear();
+
                     if (allLetters.length == 0)
                     {
                         if (level == levels.count() - 1)
@@ -65,8 +67,7 @@
                             }, 1000);
                         }
                     }
-
-                    CanvasDrawer.Clear();
+                    
                     CanvasDrawer.DrawLetters(allLetters);
                     pacMan.draw();
                     pacMan.move(allLetters, fieldWalls);
